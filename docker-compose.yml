@@ -1,0 +1,24 @@
+# https://hub.docker.com/_/elasticsearch/
+elasticsearch:
+  image: elasticsearch:2.4.0
+  ports:
+   - "9200:9200"
+  command: elasticsearch -Des.node.name="NodeOne" -Des.cluster.name="logstash"
+
+# https://hub.docker.com/_/logstash/
+logstash:
+  image: logstash:2.4.0-1
+  links:
+   - elasticsearch
+  volumes:
+    - ./logstash/:/config-dir/
+    - ./data/:/data/
+  command: logstash -f /config-dir/logstash.conf
+
+# https://hub.docker.com/_/kibana/
+kibana:
+  image: kibana:4.6.1
+  links:
+   - elasticsearch
+  ports:
+   - "80:5601"
